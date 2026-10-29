@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cari Aku - Identitas Darurat Anak</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root { --red:#e11d48; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
+  header { display:flex; align-items:center; gap:10px; padding:14px 16px; background:#fff; border-bottom:1px solid var(--line); }
+  header h1 { font-size:20px; margin:0; color:var(--red); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; margin:14px 0; }
+  h2 { font-size:18px; margin:0 0 10px; }
+  label { display:block; font-weight:600; font-size:14px; margin:12px 0 4px; }
+  .hint { font-size:12px; color:var(--muted); margin-top:3px; }
+  input, textarea { width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; font-family:inherit; background:#fff; }
+  textarea { resize: vertical; min-height: 80px; }
+  input:focus, textarea:focus { outline:2px solid var(--red); border-color:transparent; }
+  .btn { display:block; width:100%; padding:13px; border:0; border-radius:12px; font-size:16px; font-weight:700; text-align:center; text-decoration:none; cursor:pointer; margin-top:10px; }
+  .btn-red { background:var(--red); color:#fff; }
+  .btn-green { background:#16a34a; color:#fff; }
+  .btn-blue { background:#2563eb; color:#fff; }
+  .btn-gray { background:#e2e8f0; color:var(--ink); }
+  .check { display:flex; gap:10px; align-items:flex-start; font-size:14px; margin-top:14px; }
+  .check input { width:auto; margin-top:4px; }
+  .warn { background:#fef3c7; border:1px solid #fcd34d; color:#78350f; border-radius:12px; padding:12px; font-size:13px; margin-top:12px; }
+  .alert { background:#fee2e2; color:#7f1d1d; border-radius:12px; padding:12px; font-size:14px; margin-top:10px; display:none; }
+  .alert.show { display:block; }
+  .qr { display:flex; justify-content:center; padding:14px; background:#fff; }
+  .link-box { word-break: break-all; font-family: ui-monospace, monospace; font-size:11px; background:var(--bg); border:1px dashed #cbd5e1; border-radius:10px; padding:10px; color:var(--muted); }
+  .section-label { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-top:14px; }
+  .value { font-size:17px; font-weight:600; margin:2px 0 0; white-space:pre-wrap; }
+  .info-box { background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:12px; margin-top:10px; font-size:15px; white-space:pre-wrap; }
+  .hidden { display:none !important; }
+  .siren { text-align:center; font-size:14px; font-weight:700; color:var(--red); margin-bottom:6px; }
+  .capacity { background:var(--bg); border-radius:10px; padding:10px; font-size:13px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:24px">📍</span>
+  <h1>Cari Aku</h1>
+</header>
+
+<!-- ============ HALAMAN 1: BUAT IDENTITAS ============ -->
+<div class="wrap" id="view-create">
+  <div class="card">
+    <h2>Buat Identitas Darurat Anak</h2>
+    <p style="font-size:14px;color:var(--muted);margin:0">
+      Aplikasi ini <b>tidak menyimpan data apa pun</b>. Data hanya ada di dalam tautan, QR, dan chip NFC yang Anda buat.
+      Tidak ada akun, tidak ada server, dan tidak ada yang bisa mengubah data setelah QR atau chip dibuat.
+    </p>
+  </div>
+
+  <div class="card">
+    <form id="form-create" autocomplete="off">
+      <label for="f-nama-anak">Nama panggilan anak *</label>
+      <input id="f-nama-anak" maxlength="30" required placeholder="Contoh: Bagas">
+
+      <label for="f-kota">Kota / kabupaten *</label>
+      <input id="f-kota" maxlength="30" required placeholder="Contoh: Surabaya">
+
+      <label>Kondisi anak (centang yang sesuai)</label>
+      <div id="flags-box" style="display:grid;gap:8px;margin-top:6px"></div>
+
+      <label for="f-info">Catatan tambahan (opsional)</label>
+      <textarea id="f-info" maxlength="150" placeholder="Contoh: Suka mobil-mobilan. Dekati perlahan."></textarea>
+      <div class="hint">Gunakan centang di atas untuk kondisi utama. Catatan bebas hanya dipakai jika ruang masih cukup.</div>
+
+      <label for="f-nama-utama">Nama kontak utama *</label>
+      <input id="f-nama-utama" maxlength="30" required placeholder="Contoh: Ibu Sinta">
+
+      <label for="f-wa-utama">Nomor WhatsApp kontak utama *</label>
+      <input id="f-wa-utama" type="tel" required placeholder="081234567890">
+
+      <label for="f-nama-cadangan">Nama kontak cadangan (opsional)</label>
+      <input id="f-nama-cadangan" maxlength="30" placeholder="Contoh: Ayah">
+
+      <label for="f-wa-cadangan">Nomor WhatsApp cadangan (opsional)</label>
+      <input id="f-wa-cadangan" type="tel" placeholder="081234567890">
+
+      <div class="check">
+        <input type="checkbox" id="f-consent" required>
+        <label for="f-consent" style="font-weight:400;margin:0">
+          Saya adalah orang tua atau wali sah anak ini, dan memahami bahwa informasi di atas akan tampil kepada siapa pun yang memindai QR, membaca chip NFC, atau membuka tautan ini.
+        </label>
+      </div>
+
+      <div class="alert" id="create-error"></div>
+      <button class="btn btn-red" type="submit">Buat QR &amp; Tautan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ HALAMAN 2: HASIL (QR + NFC) ============ -->
+<div class="wrap hidden" id="view-result">
+  <div class="card">
+    <h2>QR Identitas Darurat Siap</h2>
+    <div class="qr" id="qr-box"></div>
+    <div class="link-box" id="result-link"></div>
+    <div class="capacity" id="capacity-info"></div>
+    <button class="btn btn-blue" id="btn-copy">Salin Tautan</button>
+    <button class="btn btn-gray" id="btn-print">Cetak QR</button>
+    <button class="btn btn-green hidden" id="btn-nfc">📲 Tulis ke Chip NFC</button>
+    <div class="hint" id="nfc-hint" style="margin-top:8px"></div>
+    <div class="warn">
+      <b>Penting:</b><br>
+      • Data ada di dalam QR, tautan, dan chip ini. Simpan dengan aman.<br>
+      • Jika data berubah, buat QR dan chip baru. Yang lama tetap berisi data lama.<br>
+      • Jangan unggah tautan ini ke media sosial.<br>
+      • Simpan atau cetak QR sebelum me-reload halaman.
+    </div>
+    <button class="btn btn-gray" id="btn-back-create">← Buat Identitas Baru</button>
+  </div>
+</div>
+
+<!-- ============ HALAMAN 3: DARURAT (untuk penemu) ============ -->
+<div class="wrap hidden" id="view-emergency">
+  <div class="card">
+    <div class="siren">⚠ IDENTITAS DARURAT ANAK</div>
+    <h2 style="font-size:24px;text-align:center" id="e-nama"></h2>
+    <div class="section-label">Kota</div>
+    <div class="value" id="e-kota"></div>
+
+    <div class="section-label">Hal penting</div>
+    <div class="info-box" id="e-info"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Kontak utama</div>
+    <div class="value" id="e-nama-utama"></div>
+    <a class="btn btn-green" id="e-tel-utama" href="#">📞 Telepon Sekarang</a>
+    <a class="btn btn-green" id="e-wa-utama" href="#" target="_blank" rel="noopener noreferrer">💬 Kirim WhatsApp</a>
+    <button class="btn btn-blue" id="e-gps">📍 Kirim Lokasi Saya via WhatsApp</button>
+    <div class="hint" style="margin-top:6px">Lokasi GPS hanya dikirim ke WhatsApp kontak di atas, tidak disimpan di aplikasi ini.</div>
+  </div>
+
+  <div class="card hidden" id="e-cadangan-card">
+    <div class="section-label">Kontak cadangan</div>
+    <div class="value" id="e-nama-cadangan"></div>
+    <a class="btn btn-green" id="e-tel-cadangan" href="#">📞 Telepon Cadangan</a>
+    <a class="btn btn-green" id="e-wa-cadangan" href="#" target="_blank" rel="noopener noreferrer">💬 WhatsApp Cadangan</a>
+  </div>
+
+  <div class="card">
+    <button class="btn btn-gray" id="btn-to-create">Buat Identitas Sendiri</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // Batas tautan untuk chip NFC terkecil (NTAG213 ~144 byte, dikurangi overhead NDEF)
+  const NFC_LIMIT = 130;
+
+  // Daftar kondisi baku. Setiap kondisi = 1 bit. Urutan TIDAK BOLEH diubah setelah dipakai.
+  const FLAGS = [
+    "Belum bisa bicara (non-verbal)",
+    "Spektrum autisme",
+    "Takut suara keras atau keramaian",
+    "Tidak mengenali nama sendiri",
+    "Mudah panik saat dipegang orang asing",
+    "Tidak bisa berjalan jauh",
+    "Harus minum obat rutin",
+    "Riwayat kejang (epilepsi)",
+    "Gangguan penglihatan",
+    "Gangguan pendengaran",
+    "Suka lari atau menghindar",
+    "Tenang jika diberi benda kesukaan"
+  ];
+  // Batas tautan untuk QR yang masih mudah dipindai
+  const QR_LIMIT = 900;
+
+  const $ = (id) => document.getElementById(id);
+  const views = ["view-create", "view-result", "view-emergency"];
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+
+  function show(id) {
+    views.forEach(v => $(v).classList.toggle("hidden", v !== id));
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- Base64 URL-safe ----------
+  function b64url(bytes) {
+    let bin = "";
+    for (const b of bytes) bin += String.fromCharCode(b);
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function unb64url(str) {
+    let s = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    const bin = atob(s);
+    return Uint8Array.from(bin, c => c.charCodeAt(0));
+  }
+  async function transform(bytes, stream) {
+    const out = new Blob([bytes]).stream().pipeThrough(stream);
+    return new Uint8Array(await new Response(out).arrayBuffer());
+  }
+
+  // ---------- Pengemasan data (padat) ----------
+  // Data disimpan sebagai array JSON: [nama, kota, info, namaUtama, waUtama, namaCadangan, waCadangan]
+  // Lalu dikompres (deflate) jika browser mendukung. Hasilnya diberi awalan "c=" (terkompresi) atau "u=" (biasa).
+  async function packData(d) {
+    const raw = enc.encode(JSON.stringify([d.n, d.k, d.i, d.u, d.w, d.cn, d.cw, String(d.f)]));
+    if ("CompressionStream" in window) {
+      const c = await transform(raw, new CompressionStream("deflate-raw"));
+      if (c.length < raw.length) return "c=" + b64url(c);
+    }
+    return "u=" + b64url(raw);
+  }
+
+  async function unpackData(payload) {
+    const tag = payload.slice(0, 2);
+    const body = payload.slice(2);
+    let raw = unb64url(body);
+    if (tag === "c=") {
+      if (!("DecompressionStream" in window)) throw new Error("browser tidak mendukung");
+      raw = await transform(raw, new DecompressionStream("deflate-raw"));
+    } else if (tag !== "u=") {
+      throw new Error("format tidak dikenal");
+    }
+    const arr = JSON.parse(dec.decode(raw));
+    if (!Array.isArray(arr) || arr.length !== 8 || arr.some(x => typeof x !== "string")) {
+      throw new Error("struktur data tidak valid");
+    }
+    const mask = parseInt(arr[7], 10);
+    if (!Number.isInteger(mask) || mask < 0 || mask >= (1 << FLAGS.length)) {
+      throw new Error("kondisi tidak valid");
+    }
+    return { n: arr[0], k: arr[1], i: arr[2], u: arr[3], w: arr[4], cn: arr[5], cw: arr[6], f: mask };
+  }
+
+  function baseUrl() {
+    return location.origin + location.pathname + "#";
+  }
+
+  // ---------- Nomor telepon ----------
+  function normalizePhone(raw) {
+    let d = (raw || "").replace(/\D/g, "");
+    if (d.startsWith("0")) d = "62" + d.slice(1);
+    return d;
+  }
+  function isValidPhone(d) {
+    return /^62[0-9]{8,13}$/.test(d);
+  }
+
+  // ---------- Pemadatan untuk chip NFC: isi kapasitas semaksimal mungkin ----------
+  // Mengembalikan { d, truncated, droppedBackup } atau null jika tidak muat sama sekali.
+  async function fitForNfc(full) {
+    const len = async (x) => (baseUrl() + await packData(x)).length;
+
+    // Cari jumlah karakter info terpanjang yang masih muat (pencarian biner)
+    async function fitInfo(base) {
+      let lo = 0, hi = base.i.length;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        const cand = { ...base, i: base.i.slice(0, mid) };
+        if (await len(cand) <= NFC_LIMIT) lo = mid; else hi = mid - 1;
+      }
+      return lo;
+    }
+
+    // Tahap 1: kontak cadangan tetap, info dipotong sesuai sisa kapasitas
+    let k = await fitInfo(full);
+    let obj = { ...full, i: full.i.slice(0, k) };
+    if (await len(obj) <= NFC_LIMIT) {
+      return { d: obj, truncated: k < full.i.length, droppedBackup: false };
+    }
+
+    // Tahap 2: kontak cadangan dihapus, lalu info dipotong ulang
+    const noBackup = { ...full, cn: "", cw: "" };
+    k = await fitInfo(noBackup);
+    obj = { ...noBackup, i: noBackup.i.slice(0, k) };
+    if (await len(obj) <= NFC_LIMIT) {
+      return { d: obj, truncated: true, droppedBackup: true };
+    }
+    return null; // nama, kota, atau nomor utama terlalu panjang
+  }
+
+  // Isi daftar centang di form
+  (function buildFlags() {
+    const box = $("flags-box");
+    FLAGS.forEach((label, idx) => {
+      const row = document.createElement("label");
+      row.style.cssText = "display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;margin:0;cursor:pointer";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "flag";
+      cb.value = String(idx);
+      cb.style.cssText = "width:auto;margin-top:4px";
+      const span = document.createElement("span");
+      span.textContent = label;
+      row.appendChild(cb);
+      row.appendChild(span);
+      box.appendChild(row);
+    });
+  })();
+
+  function readFlagsMask() {
+    let mask = 0;
+    document.querySelectorAll("#flags-box .flag").forEach(cb => {
+      if (cb.checked) mask |= (1 << Number(cb.value));
+    });
+    return mask;
+  }
+
+  function flagsToLabels(mask) {
+    return FLAGS.filter((_, idx) => (mask & (1 << idx)) !== 0);
+  }
+
+  // ---------- Halaman buat ----------
+  let pending = null; // hasil terakhir yang baru dibuat (hanya di memori)
+
+  $("form-create").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const err = $("create-error");
+    err.classList.remove("show");
+    const showErr = (msg) => { err.textContent = msg; err.classList.add("show"); };
+
+    const d = {
+      n: $("f-nama-anak").value.trim(),
+      k: $("f-kota").value.trim(),
+      i: $("f-info").value.trim(),
+      u: $("f-nama-utama").value.trim(),
+      w: normalizePhone($("f-wa-utama").value),
+      cn: $("f-nama-cadangan").value.trim(),
+      cw: normalizePhone($("f-wa-cadangan").value),
+      f: readFlagsMask()
+    };
+
+    if (!isValidPhone(d.w)) return showErr("Nomor WhatsApp kontak utama tidak valid. Contoh: 081234567890");
+    if (d.cw && !isValidPhone(d.cw)) return showErr("Nomor WhatsApp cadangan tidak valid.");
+    if (!$("f-consent").checked) return showErr("Mohon centang pernyataan persetujuan.");
+
+    const payload = await packData(d);
+    if (baseUrl().length + payload.length > QR_LIMIT) {
+      return showErr("Teks terlalu panjang. Kurangi isi kolom 'Hal penting'.");
+    }
+
+    pending = { payload, d };
+    location.hash = payload;   // memicu tampilan hasil
+  });
+
+  // ---------- Halaman hasil ----------
+  async function renderResult(payload, d) {
+    const url = baseUrl() + payload;
+    $("qr-box").innerHTML = "";
+    new QRCode($("qr-box"), { text: url, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M });
+    $("result-link").textContent = url;
+    $("btn-copy").onclick = async () => {
+      try { await navigator.clipboard.writeText(url); alert("Tautan disalin."); }
+      catch (e) { alert("Gagal menyalin. Tekan dan tahan tautan di atas untuk menyalin manual."); }
+    };
+    $("btn-print").onclick = () => window.print();
+
+    // Info kapasitas chip NFC
+    const cap = $("capacity-info");
+    const fit = await fitForNfc(d);
+    const nfcBtn = $("btn-nfc");
+    const hint = $("nfc-hint");
+    hint.textContent = "";
+
+    if (!fit) {
+      cap.textContent = "Chip NFC kecil (NTAG213) tidak muat untuk data ini. Perpendek nama, kota, atau nomor. QR tetap bisa dipakai.";
+      nfcBtn.classList.add("hidden");
+    } else {
+      const total = d.i.length;
+      const kept = fit.d.i.length;
+      const nFlags = flagsToLabels(d.f).length;
+      cap.innerHTML = "";
+      const line1 = document.createElement("div");
+      line1.textContent = "Chip NFC kecil (NTAG213): " + nFlags + " kondisi ikut tertulis. Catatan bebas muat " + kept + " dari " + total + " karakter.";
+      cap.appendChild(line1);
+      if (fit.droppedBackup) {
+        const line2 = document.createElement("div");
+        line2.textContent = "Kontak cadangan tidak muat di chip kecil dan tidak akan ditulis. QR tetap berisi lengkap.";
+        cap.appendChild(line2);
+      }
+      nfcBtn.classList.remove("hidden");
+      nfcBtn.onclick = () => writeNfc(fit);
+    }
+
+    if (!("NDEFReader" in window)) {
+      nfcBtn.classList.add("hidden");
+      hint.textContent = "Fitur NFC hanya tersedia di Chrome Android.";
+    }
+
+    show("view-result");
+  }
+
+  // ---------- Tulis tautan ke chip NFC ----------
+  async function writeNfc(fit) {
+    const hint = $("nfc-hint");
+    try {
+      const url = baseUrl() + await packData(fit.d);
+      const bytes = enc.encode(url).length;
+      if (bytes > NFC_LIMIT) {
+        hint.textContent = "Tautan " + bytes + " byte, melebihi batas chip kecil. Batalkan penulisan.";
+        return;
+      }
+      const ndef = new NDEFReader();
+      hint.textContent = "Dekatkan chip NFC ke bagian belakang HP. Tahan sampai ada pemberitahuan...";
+      await ndef.write({ records: [{ recordType: "url", data: url }] });
+      hint.textContent = "Berhasil ditulis (" + bytes + " byte). Uji dengan mendekatkan HP lain ke chip.";
+    } catch (e) {
+      hint.textContent = "Gagal menulis: " + (e.name === "NotAllowedError" ? "izin NFC ditolak." : (e.message || e.name)) +
+        " Pastikan NFC HP aktif dan chip tidak terkunci.";
+    }
+  }
+
+  $("btn-back-create").addEventListener("click", () => { pending = null; location.hash = ""; });
+  $("btn-to-create").addEventListener("click", () => { pending = null; location.hash = ""; });
+
+  // ---------- Halaman darurat (penemu) ----------
+  function renderEmergency(d) {
+    $("e-nama").textContent = d.n;
+    $("e-kota").textContent = d.k;
+    const lines = flagsToLabels(d.f).map(x => "• " + x);
+    if (d.i) lines.push(d.i);
+    $("e-info").textContent = lines.length ? lines.join("\n") : "Tidak ada keterangan khusus.";
+    $("e-nama-utama").textContent = d.u;
+
+    $("e-tel-utama").href = "tel:+" + d.w;
+    $("e-wa-utama").href = "https://wa.me/" + d.w + "?text=" +
+      encodeURIComponent("Halo, saya menemukan anak bernama " + d.n + ". Saya membaca identitas daruratnya.");
+
+    $("e-gps").onclick = () => {
+      if (!navigator.geolocation) return alert("GPS tidak tersedia di perangkat ini.");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const maps = "https://maps.google.com/?q=" + pos.coords.latitude + "," + pos.coords.longitude;
+          const msg = "Saya menemukan " + d.n + " di sini: " + maps;
+          location.href = "https://wa.me/" + d.w + "?text=" + encodeURIComponent(msg);
+        },
+        () => alert("Lokasi tidak dapat diambil. Pastikan izin lokasi diaktifkan."),
+        { enableHighAccuracy: true, timeout: 15000 }
+      );
+    };
+
+    if (d.cn || d.cw) {
+      $("e-cadangan-card").classList.remove("hidden");
+      $("e-nama-cadangan").textContent = d.cn || "-";
+      const hasCw = !!d.cw;
+      $("e-tel-cadangan").classList.toggle("hidden", !hasCw);
+      $("e-wa-cadangan").classList.toggle("hidden", !hasCw);
+      if (hasCw) {
+        $("e-tel-cadangan").href = "tel:+" + d.cw;
+        $("e-wa-cadangan").href = "https://wa.me/" + d.cw;
+      }
+    } else {
+      $("e-cadangan-card").classList.add("hidden");
+    }
+    show("view-emergency");
+  }
+
+  // ---------- Router berdasarkan hash ----------
+  async function route() {
+    const h = (location.hash || "").slice(1);
+    if (!h) { pending = null; show("view-create"); return; }
+
+    // Pembuat baru saja menekan tombol: tampilkan hasil
+    if (pending && pending.payload === h) {
+      const p = pending;
+      pending = null;
+      await renderResult(p.payload, p.d);
+      return;
+    }
+
+    // Penemu membuka tautan
+    if (h.startsWith("c=") || h.startsWith("u=")) {
+      let d;
+      try { d = await unpackData(h); } catch (e) { d = null; }
+      if (!d || !isValidPhone(d.w)) { location.hash = ""; return; }
+      renderEmergency(d);
+    } else {
+      location.hash = "";
+    }
+  }
+
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
