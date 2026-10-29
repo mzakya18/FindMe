@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Cari Aku - Identitas Darurat Anak</title>
+<title>FindMe - Identitas Darurat Anak</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#e11d48">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FindMe">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="robots" content="noindex, nofollow">
 <style>
   :root { --red:#e11d48; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; }
@@ -43,15 +50,23 @@
 
 <header>
   <span style="font-size:24px">📍</span>
-  <h1>Cari Aku</h1>
+  <h1>FindMe</h1>
+  <button id="btn-install" class="hidden" style="margin-left:auto;padding:8px 12px;border:0;border-radius:10px;background:#e11d48;color:#fff;font-weight:700;font-size:13px;cursor:pointer">Pasang Aplikasi</button>
 </header>
+
+<!-- Petunjuk pasang khusus iPhone -->
+<div class="wrap hidden" id="ios-hint-wrap" style="padding-bottom:0">
+  <div class="card" style="font-size:14px;margin-top:12px">
+    <b>Pasang di iPhone:</b> ketuk ikon <b>Bagikan</b> (kotak dengan panah) di Safari, lalu pilih <b>Tambah ke Layar Utama</b>.
+  </div>
+</div>
 
 <!-- ============ HALAMAN 1: BUAT IDENTITAS ============ -->
 <div class="wrap" id="view-create">
   <div class="card">
     <h2>Buat Identitas Darurat Anak</h2>
     <p style="font-size:14px;color:var(--muted);margin:0">
-      Aplikasi ini <b>tidak menyimpan data apa pun</b>. Data hanya ada di dalam tautan, QR, dan chip NFC yang Anda buat.
+      FindMe <b>tidak menyimpan data apa pun</b>. Data hanya ada di dalam tautan, QR, dan chip NFC yang Anda buat.
       Tidak ada akun, tidak ada server, dan tidak ada yang bisa mengubah data setelah QR atau chip dibuat.
     </p>
   </div>
@@ -482,6 +497,33 @@
     } else {
       location.hash = "";
     }
+  }
+
+  // ---------- Pasang sebagai aplikasi (PWA) ----------
+  let deferredInstall = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstall = e;
+    $("btn-install").classList.remove("hidden");
+  });
+  $("btn-install").addEventListener("click", async () => {
+    if (!deferredInstall) return;
+    deferredInstall.prompt();
+    await deferredInstall.userChoice;
+    deferredInstall = null;
+    $("btn-install").classList.add("hidden");
+  });
+  window.addEventListener("appinstalled", () => {
+    $("btn-install").classList.add("hidden");
+  });
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (isIos && !isStandalone) $("ios-hint-wrap").classList.remove("hidden");
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(e => console.error("SW gagal:", e));
+    });
   }
 
   window.addEventListener("hashchange", route);
