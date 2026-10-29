@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>FindMe - Identitas Darurat Anak</title>
+<meta name="robots" content="noindex, nofollow">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -11,7 +12,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="FindMe">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="robots" content="noindex, nofollow">
 <style>
   :root { --red:#e11d48; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; }
   * { box-sizing: border-box; }
@@ -21,16 +21,20 @@
   header h1 { font-size:20px; margin:0; color:var(--red); }
   .card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px; margin:14px 0; }
   h2 { font-size:18px; margin:0 0 10px; }
+  h3 { font-size:15px; margin:16px 0 6px; }
   label { display:block; font-weight:600; font-size:14px; margin:12px 0 4px; }
   .hint { font-size:12px; color:var(--muted); margin-top:3px; }
-  input, textarea { width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; font-family:inherit; background:#fff; }
-  textarea { resize: vertical; min-height: 80px; }
-  input:focus, textarea:focus { outline:2px solid var(--red); border-color:transparent; }
-  .btn { display:block; width:100%; padding:13px; border:0; border-radius:12px; font-size:16px; font-weight:700; text-align:center; text-decoration:none; cursor:pointer; margin-top:10px; }
+  p.lead { font-size:14px; color:var(--muted); margin:0; }
+  input, textarea, select { width:100%; padding:11px 12px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; font-family:inherit; background:#fff; }
+  textarea { resize: vertical; min-height: 70px; }
+  input:focus, textarea:focus, select:focus { outline:2px solid var(--red); border-color:transparent; }
+  .btn { display:block; width:100%; padding:13px; border:0; border-radius:12px; font-size:16px; font-weight:700; text-align:center; text-decoration:none; cursor:pointer; margin-top:10px; color:var(--ink); }
   .btn-red { background:var(--red); color:#fff; }
   .btn-green { background:#16a34a; color:#fff; }
   .btn-blue { background:#2563eb; color:#fff; }
-  .btn-gray { background:#e2e8f0; color:var(--ink); }
+  .btn-gray { background:#e2e8f0; }
+  .btn-dark { background:#0f172a; color:#fff; }
+  .btn-small { display:inline-block; width:auto; padding:8px 12px; margin:0; font-size:13px; }
   .check { display:flex; gap:10px; align-items:flex-start; font-size:14px; margin-top:14px; }
   .check input { width:auto; margin-top:4px; }
   .warn { background:#fef3c7; border:1px solid #fcd34d; color:#78350f; border-radius:12px; padding:12px; font-size:13px; margin-top:12px; }
@@ -44,6 +48,11 @@
   .hidden { display:none !important; }
   .siren { text-align:center; font-size:14px; font-weight:700; color:var(--red); margin-bottom:6px; }
   .capacity { background:var(--bg); border-radius:10px; padding:10px; font-size:13px; margin-top:10px; }
+  .footer { text-align:center; font-size:12px; color:var(--muted); padding:10px 0 24px; }
+  .footer a { color:var(--red); }
+  .toggle-row { display:flex; gap:10px; align-items:flex-start; font-size:14px; margin-top:12px; }
+  .toggle-row input { width:auto; margin-top:4px; }
+  .legal-text { font-size:13px; color:#334155; background:var(--bg); border-radius:10px; padding:12px; margin-top:8px; }
 </style>
 </head>
 <body>
@@ -51,11 +60,12 @@
 <header>
   <span style="font-size:24px">📍</span>
   <h1>FindMe</h1>
-  <button id="btn-install" class="hidden" style="margin-left:auto;padding:8px 12px;border:0;border-radius:10px;background:#e11d48;color:#fff;font-weight:700;font-size:13px;cursor:pointer">Pasang Aplikasi</button>
+  <button id="btn-settings" title="Pengaturan" style="margin-left:auto;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:18px;cursor:pointer">⚙</button>
+  <button id="btn-install" class="hidden" style="padding:8px 12px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:13px;cursor:pointer">Pasang Aplikasi</button>
 </header>
 
 <!-- Petunjuk pasang khusus iPhone -->
-<div class="wrap hidden" id="ios-hint-wrap" style="padding-bottom:0">
+<div class="wrap hidden" id="ios-hint-wrap">
   <div class="card" style="font-size:14px;margin-top:12px">
     <b>Pasang di iPhone:</b> ketuk ikon <b>Bagikan</b> (kotak dengan panah) di Safari, lalu pilih <b>Tambah ke Layar Utama</b>.
   </div>
@@ -65,9 +75,9 @@
 <div class="wrap" id="view-create">
   <div class="card">
     <h2>Buat Identitas Darurat Anak</h2>
-    <p style="font-size:14px;color:var(--muted);margin:0">
-      FindMe <b>tidak menyimpan data apa pun</b>. Data hanya ada di dalam tautan, QR, dan chip NFC yang Anda buat.
-      Tidak ada akun, tidak ada server, dan tidak ada yang bisa mengubah data setelah QR atau chip dibuat.
+    <p class="lead">
+      FindMe <b>tidak menyimpan data apa pun di server</b>. Data hanya ada di dalam QR, tautan, dan chip NFC yang Anda buat.
+      Tidak ada akun, tidak ada pelacakan, dan tidak ada yang bisa mengubah data setelah QR atau chip dibuat.
     </p>
   </div>
 
@@ -84,7 +94,7 @@
 
       <label for="f-info">Catatan tambahan (opsional)</label>
       <textarea id="f-info" maxlength="150" placeholder="Contoh: Suka mobil-mobilan. Dekati perlahan."></textarea>
-      <div class="hint">Gunakan centang di atas untuk kondisi utama. Catatan bebas hanya dipakai jika ruang masih cukup.</div>
+      <div class="hint">Gunakan centang untuk kondisi utama. Catatan bebas dipakai jika ruang chip masih cukup.</div>
 
       <label for="f-nama-utama">Nama kontak utama *</label>
       <input id="f-nama-utama" maxlength="30" required placeholder="Contoh: Ibu Sinta">
@@ -101,7 +111,7 @@
       <div class="check">
         <input type="checkbox" id="f-consent" required>
         <label for="f-consent" style="font-weight:400;margin:0">
-          Saya adalah orang tua atau wali sah anak ini, dan memahami bahwa informasi di atas akan tampil kepada siapa pun yang memindai QR, membaca chip NFC, atau membuka tautan ini.
+          Saya adalah orang tua atau wali sah anak ini. Saya memahami bahwa informasi di atas akan tampil kepada siapa pun yang memindai QR, membaca chip NFC, atau membuka tautan ini. Saya menyetujui bahwa <b>seluruh tindakan di aplikasi ini berada di bawah kendali saya sebagai orang tua atau wali</b>, termasuk pembuatan, pencetakan, penempelan, dan penghentian penggunaan QR atau chip.
         </label>
       </div>
 
@@ -111,15 +121,16 @@
   </div>
 </div>
 
-<!-- ============ HALAMAN 2: HASIL (QR + NFC) ============ -->
+<!-- ============ HALAMAN 2: HASIL ============ -->
 <div class="wrap hidden" id="view-result">
   <div class="card">
     <h2>QR Identitas Darurat Siap</h2>
     <div class="qr" id="qr-box"></div>
     <div class="link-box" id="result-link"></div>
     <div class="capacity" id="capacity-info"></div>
+    <button class="btn btn-dark" id="btn-card">🖼 Unduh Kartu Siap Cetak (PNG)</button>
     <button class="btn btn-blue" id="btn-copy">Salin Tautan</button>
-    <button class="btn btn-gray" id="btn-print">Cetak QR</button>
+    <button class="btn btn-gray" id="btn-print">Cetak Halaman Ini</button>
     <button class="btn btn-green hidden" id="btn-nfc">📲 Tulis ke Chip NFC</button>
     <div class="hint" id="nfc-hint" style="margin-top:8px"></div>
     <div class="warn">
@@ -127,13 +138,63 @@
       • Data ada di dalam QR, tautan, dan chip ini. Simpan dengan aman.<br>
       • Jika data berubah, buat QR dan chip baru. Yang lama tetap berisi data lama.<br>
       • Jangan unggah tautan ini ke media sosial.<br>
-      • Simpan atau cetak QR sebelum me-reload halaman.
+      • Simpan kartu PNG atau cetak sebelum me-reload halaman.
     </div>
     <button class="btn btn-gray" id="btn-back-create">← Buat Identitas Baru</button>
   </div>
 </div>
 
-<!-- ============ HALAMAN 3: DARURAT (untuk penemu) ============ -->
+<!-- ============ HALAMAN 3: PENGATURAN ============ -->
+<div class="wrap hidden" id="view-settings">
+  <div class="card">
+    <h2>Pengaturan</h2>
+    <p class="lead">Pengaturan ini hanya tersimpan di perangkat Anda, tidak dikirim ke server mana pun.</p>
+
+    <h3>Kendali orang tua</h3>
+    <div class="legal-text">
+      Seluruh pembuatan, pencetakan, dan penggunaan identitas darurat di FindMe berada di bawah kendali orang tua atau wali anak.
+      Anda dapat berhenti menggunakan kapan saja: cukup jangan lagi mencetak atau menempelkan QR, dan hapus atau tulis ulang chip NFC.
+      Aplikasi ini tidak memiliki akses ke data Anda di luar perangkat.
+    </div>
+
+    <h3>Branding pada kartu</h3>
+    <label for="s-brand">Teks "Find Me by"</label>
+    <input id="s-brand" maxlength="40" placeholder="Muhammad Zaky Akbar">
+
+    <label for="s-threads">Tautan Threads untuk diskusi</label>
+    <input id="s-threads" maxlength="120" placeholder="https://www.threads.net/@username">
+    <div class="hint">Hanya tautan threads.net yang diterima. Kosongkan jika tidak ingin menampilkan.</div>
+
+    <h3>Kartu cetak</h3>
+    <div class="toggle-row">
+      <input type="checkbox" id="s-disclaimer">
+      <label for="s-disclaimer" style="font-weight:400;margin:0">Tampilkan keterangan legal dan panduan penemu di kartu</label>
+    </div>
+
+    <h3>Jenis chip NFC</h3>
+    <label for="s-chip">Pilih chip yang Anda pakai</label>
+    <select id="s-chip">
+      <option value="213">NTAG213 (paling kecil, ±130 byte)</option>
+      <option value="215">NTAG215 (±480 byte)</option>
+      <option value="216">NTAG216 (±860 byte)</option>
+    </select>
+
+    <button class="btn btn-gray" id="s-reset">Kembalikan ke pengaturan awal</button>
+    <button class="btn btn-gray" id="s-back">← Kembali</button>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Tentang keamanan FindMe</h3>
+    <div class="legal-text">
+      • Tidak ada server, database, akun, atau pelacak di FindMe.<br>
+      • Data hanya ada di dalam tautan, QR, atau chip yang Anda buat.<br>
+      • Kode aplikasi bersifat terbuka dan dapat diperiksa oleh siapa pun.<br>
+      • Untuk pertanyaan atau masukan, hubungi lewat tautan Threads di pengaturan.
+    </div>
+  </div>
+</div>
+
+<!-- ============ HALAMAN 4: DARURAT (untuk penemu) ============ -->
 <div class="wrap hidden" id="view-emergency">
   <div class="card">
     <div class="siren">⚠ IDENTITAS DARURAT ANAK</div>
@@ -161,6 +222,11 @@
     <a class="btn btn-green" id="e-wa-cadangan" href="#" target="_blank" rel="noopener noreferrer">💬 WhatsApp Cadangan</a>
   </div>
 
+  <div class="footer">
+    <div>Find Me by: <b id="e-brand"></b></div>
+    <div id="e-threads-wrap" class="hidden">Diskusi: <a id="e-threads" href="#" target="_blank" rel="noopener noreferrer">Threads</a></div>
+  </div>
+
   <div class="card">
     <button class="btn btn-gray" id="btn-to-create">Buat Identitas Sendiri</button>
   </div>
@@ -171,8 +237,9 @@
 (function () {
   "use strict";
 
-  // Batas tautan untuk chip NFC terkecil (NTAG213 ~144 byte, dikurangi overhead NDEF)
-  const NFC_LIMIT = 130;
+  const QR_LIMIT = 900;
+  const CHIP_LIMITS = { "213": 130, "215": 480, "216": 860 };
+  const DEFAULTS = { brand: "Muhammad Zaky Akbar", threads: "", disclaimer: true, chip: "213" };
 
   // Daftar kondisi baku. Setiap kondisi = 1 bit. Urutan TIDAK BOLEH diubah setelah dipakai.
   const FLAGS = [
@@ -189,16 +256,33 @@
     "Suka lari atau menghindar",
     "Tenang jika diberi benda kesukaan"
   ];
-  // Batas tautan untuk QR yang masih mudah dipindai
-  const QR_LIMIT = 900;
 
   const $ = (id) => document.getElementById(id);
-  const views = ["view-create", "view-result", "view-emergency"];
+  const views = ["view-create", "view-result", "view-settings", "view-emergency"];
   const enc = new TextEncoder();
   const dec = new TextDecoder();
+  let prevView = "view-create";
+
+  // ---------- Pengaturan (hanya di perangkat) ----------
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem("findme-settings");
+      return Object.assign({}, DEFAULTS, raw ? JSON.parse(raw) : {});
+    } catch (e) { return Object.assign({}, DEFAULTS); }
+  }
+  function saveSettings(s) {
+    try { localStorage.setItem("findme-settings", JSON.stringify(s)); } catch (e) {}
+  }
+  let settings = loadSettings();
+
+  function safeThreadsUrl(u) {
+    return /^https:\/\/(www\.)?threads\.net\/@[A-Za-z0-9._]+\/?$/.test(u || "") ? u : "";
+  }
+  function nfcLimit() { return CHIP_LIMITS[settings.chip] || CHIP_LIMITS["213"]; }
 
   function show(id) {
     views.forEach(v => $(v).classList.toggle("hidden", v !== id));
+    $("btn-settings").classList.toggle("hidden", id === "view-emergency");
     window.scrollTo(0, 0);
   }
 
@@ -220,8 +304,6 @@
   }
 
   // ---------- Pengemasan data (padat) ----------
-  // Data disimpan sebagai array JSON: [nama, kota, info, namaUtama, waUtama, namaCadangan, waCadangan]
-  // Lalu dikompres (deflate) jika browser mendukung. Hasilnya diberi awalan "c=" (terkompresi) atau "u=" (biasa).
   async function packData(d) {
     const raw = enc.encode(JSON.stringify([d.n, d.k, d.i, d.u, d.w, d.cn, d.cw, String(d.f)]));
     if ("CompressionStream" in window) {
@@ -233,8 +315,7 @@
 
   async function unpackData(payload) {
     const tag = payload.slice(0, 2);
-    const body = payload.slice(2);
-    let raw = unb64url(body);
+    let raw = unb64url(payload.slice(2));
     if (tag === "c=") {
       if (!("DecompressionStream" in window)) throw new Error("browser tidak mendukung");
       raw = await transform(raw, new DecompressionStream("deflate-raw"));
@@ -252,9 +333,7 @@
     return { n: arr[0], k: arr[1], i: arr[2], u: arr[3], w: arr[4], cn: arr[5], cw: arr[6], f: mask };
   }
 
-  function baseUrl() {
-    return location.origin + location.pathname + "#";
-  }
+  function baseUrl() { return location.origin + location.pathname + "#"; }
 
   // ---------- Nomor telepon ----------
   function normalizePhone(raw) {
@@ -262,44 +341,9 @@
     if (d.startsWith("0")) d = "62" + d.slice(1);
     return d;
   }
-  function isValidPhone(d) {
-    return /^62[0-9]{8,13}$/.test(d);
-  }
+  function isValidPhone(d) { return /^62[0-9]{8,13}$/.test(d); }
 
-  // ---------- Pemadatan untuk chip NFC: isi kapasitas semaksimal mungkin ----------
-  // Mengembalikan { d, truncated, droppedBackup } atau null jika tidak muat sama sekali.
-  async function fitForNfc(full) {
-    const len = async (x) => (baseUrl() + await packData(x)).length;
-
-    // Cari jumlah karakter info terpanjang yang masih muat (pencarian biner)
-    async function fitInfo(base) {
-      let lo = 0, hi = base.i.length;
-      while (lo < hi) {
-        const mid = Math.ceil((lo + hi) / 2);
-        const cand = { ...base, i: base.i.slice(0, mid) };
-        if (await len(cand) <= NFC_LIMIT) lo = mid; else hi = mid - 1;
-      }
-      return lo;
-    }
-
-    // Tahap 1: kontak cadangan tetap, info dipotong sesuai sisa kapasitas
-    let k = await fitInfo(full);
-    let obj = { ...full, i: full.i.slice(0, k) };
-    if (await len(obj) <= NFC_LIMIT) {
-      return { d: obj, truncated: k < full.i.length, droppedBackup: false };
-    }
-
-    // Tahap 2: kontak cadangan dihapus, lalu info dipotong ulang
-    const noBackup = { ...full, cn: "", cw: "" };
-    k = await fitInfo(noBackup);
-    obj = { ...noBackup, i: noBackup.i.slice(0, k) };
-    if (await len(obj) <= NFC_LIMIT) {
-      return { d: obj, truncated: true, droppedBackup: true };
-    }
-    return null; // nama, kota, atau nomor utama terlalu panjang
-  }
-
-  // Isi daftar centang di form
+  // ---------- Daftar centang kondisi ----------
   (function buildFlags() {
     const box = $("flags-box");
     FLAGS.forEach((label, idx) => {
@@ -325,13 +369,40 @@
     });
     return mask;
   }
-
   function flagsToLabels(mask) {
     return FLAGS.filter((_, idx) => (mask & (1 << idx)) !== 0);
   }
 
+  // ---------- Pemadatan untuk chip NFC ----------
+  async function fitForNfc(full) {
+    const limit = nfcLimit();
+    const len = async (x) => (baseUrl() + await packData(x)).length;
+
+    async function fitInfo(base) {
+      let lo = 0, hi = base.i.length;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        if (await len({ ...base, i: base.i.slice(0, mid) }) <= limit) lo = mid; else hi = mid - 1;
+      }
+      return lo;
+    }
+
+    let k = await fitInfo(full);
+    let obj = { ...full, i: full.i.slice(0, k) };
+    if (await len(obj) <= limit) {
+      return { d: obj, truncated: k < full.i.length, droppedBackup: false };
+    }
+    const noBackup = { ...full, cn: "", cw: "" };
+    k = await fitInfo(noBackup);
+    obj = { ...noBackup, i: noBackup.i.slice(0, k) };
+    if (await len(obj) <= limit) {
+      return { d: obj, truncated: true, droppedBackup: true };
+    }
+    return null;
+  }
+
   // ---------- Halaman buat ----------
-  let pending = null; // hasil terakhir yang baru dibuat (hanya di memori)
+  let pending = null;
 
   $("form-create").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -352,18 +423,20 @@
 
     if (!isValidPhone(d.w)) return showErr("Nomor WhatsApp kontak utama tidak valid. Contoh: 081234567890");
     if (d.cw && !isValidPhone(d.cw)) return showErr("Nomor WhatsApp cadangan tidak valid.");
-    if (!$("f-consent").checked) return showErr("Mohon centang pernyataan persetujuan.");
+    if (!$("f-consent").checked) return showErr("Mohon centang pernyataan persetujuan dan kendali orang tua.");
 
     const payload = await packData(d);
     if (baseUrl().length + payload.length > QR_LIMIT) {
-      return showErr("Teks terlalu panjang. Kurangi isi kolom 'Hal penting'.");
+      return showErr("Teks terlalu panjang. Kurangi isi kolom catatan.");
     }
 
     pending = { payload, d };
-    location.hash = payload;   // memicu tampilan hasil
+    location.hash = payload;
   });
 
   // ---------- Halaman hasil ----------
+  let lastQrSource = null;
+
   async function renderResult(payload, d) {
     const url = baseUrl() + payload;
     $("qr-box").innerHTML = "";
@@ -374,28 +447,26 @@
       catch (e) { alert("Gagal menyalin. Tekan dan tahan tautan di atas untuk menyalin manual."); }
     };
     $("btn-print").onclick = () => window.print();
+    $("btn-card").onclick = () => downloadCard(d, url);
 
-    // Info kapasitas chip NFC
     const cap = $("capacity-info");
-    const fit = await fitForNfc(d);
+    cap.innerHTML = "";
     const nfcBtn = $("btn-nfc");
     const hint = $("nfc-hint");
     hint.textContent = "";
 
+    const fit = await fitForNfc(d);
     if (!fit) {
-      cap.textContent = "Chip NFC kecil (NTAG213) tidak muat untuk data ini. Perpendek nama, kota, atau nomor. QR tetap bisa dipakai.";
+      cap.textContent = "Chip " + "NTAG" + settings.chip + " tidak muat untuk data ini. Perpendek nama, kota, atau nomor. QR tetap bisa dipakai.";
       nfcBtn.classList.add("hidden");
     } else {
-      const total = d.i.length;
-      const kept = fit.d.i.length;
-      const nFlags = flagsToLabels(d.f).length;
-      cap.innerHTML = "";
       const line1 = document.createElement("div");
-      line1.textContent = "Chip NFC kecil (NTAG213): " + nFlags + " kondisi ikut tertulis. Catatan bebas muat " + kept + " dari " + total + " karakter.";
+      line1.textContent = "Chip NTAG" + settings.chip + ": " + flagsToLabels(d.f).length +
+        " kondisi ikut tertulis. Catatan bebas muat " + fit.d.i.length + " dari " + d.i.length + " karakter.";
       cap.appendChild(line1);
       if (fit.droppedBackup) {
         const line2 = document.createElement("div");
-        line2.textContent = "Kontak cadangan tidak muat di chip kecil dan tidak akan ditulis. QR tetap berisi lengkap.";
+        line2.textContent = "Kontak cadangan tidak muat di chip dan tidak ditulis. QR tetap berisi lengkap.";
         cap.appendChild(line2);
       }
       nfcBtn.classList.remove("hidden");
@@ -407,7 +478,117 @@
       hint.textContent = "Fitur NFC hanya tersedia di Chrome Android.";
     }
 
+    prevView = "view-result";
     show("view-result");
+  }
+
+  // ---------- Kartu cetak PNG (dengan branding dan keterangan) ----------
+  function wrapLines(ctx, text, maxWidth) {
+    const words = text.split(/\s+/);
+    const lines = [];
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function downloadCard(d, url) {
+    const W = 1080, H = 1560;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    // Latar
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+
+    // Watermark diagonal
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(-Math.PI / 6);
+    ctx.fillStyle = "rgba(225,29,72,0.06)";
+    ctx.font = "bold 150px system-ui, Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("FindMe", 0, -120);
+    ctx.fillText("FindMe", 0, 120);
+    ctx.restore();
+
+    // Header
+    ctx.fillStyle = "#e11d48";
+    ctx.fillRect(0, 0, W, 190);
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.font = "bold 84px system-ui, Arial, sans-serif";
+    ctx.fillText("FindMe", 60, 105);
+    ctx.font = "34px system-ui, Arial, sans-serif";
+    ctx.fillText("Identitas Darurat Anak", 60, 152);
+
+    // Nama anak
+    ctx.fillStyle = "#64748b";
+    ctx.font = "bold 30px system-ui, Arial, sans-serif";
+    ctx.fillText("NAMA ANAK", 60, 265);
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 96px system-ui, Arial, sans-serif";
+    ctx.fillText(d.n, 60, 360);
+    ctx.fillStyle = "#334155";
+    ctx.font = "40px system-ui, Arial, sans-serif";
+    ctx.fillText("Kota: " + d.k, 60, 420);
+
+    // QR
+    const src = document.querySelector("#qr-box canvas") || document.querySelector("#qr-box img");
+    const qrSize = 620, qrX = (W - qrSize) / 2, qrY = 470;
+    ctx.fillStyle = "#f1f5f9";
+    ctx.fillRect(qrX - 24, qrY - 24, qrSize + 48, qrSize + 48);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
+    if (src) ctx.drawImage(src, qrX, qrY, qrSize, qrSize);
+
+    // Kontak
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 40px system-ui, Arial, sans-serif";
+    ctx.fillText("Kontak utama: " + d.u, W / 2, 1200);
+    ctx.font = "36px system-ui, Arial, sans-serif";
+    ctx.fillText("+" + d.w, W / 2, 1252);
+
+    // Keterangan (opsional)
+    let y = 1320;
+    if (settings.disclaimer) {
+      ctx.fillStyle = "#64748b";
+      ctx.font = "24px system-ui, Arial, sans-serif";
+      const text = "Kartu ini dibuat oleh orang tua atau wali. Seluruh data ada di dalam QR, tidak disimpan di server. " +
+        "Jika menemukan anak ini, pindai QR dan hubungi kontak di atas. Gunakan hanya untuk keperluan darurat.";
+      const lines = wrapLines(ctx, text, W - 160);
+      lines.forEach(line => { ctx.fillText(line, W / 2, y); y += 34; });
+    }
+
+    // Footer
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "bold 38px system-ui, Arial, sans-serif";
+    ctx.fillText("Find Me by: " + settings.brand, W / 2, H - 90);
+    const tu = safeThreadsUrl(settings.threads);
+    if (tu) {
+      ctx.fillStyle = "#e11d48";
+      ctx.font = "30px system-ui, Arial, sans-serif";
+      ctx.fillText("Diskusi: " + tu.replace(/^https:\/\//, ""), W / 2, H - 45);
+    }
+
+    canvas.toBlob((blob) => {
+      if (!blob) return alert("Gagal membuat kartu. Coba lagi.");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "FindMe-" + d.n.replace(/[^A-Za-z0-9]+/g, "-") + ".png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    }, "image/png");
   }
 
   // ---------- Tulis tautan ke chip NFC ----------
@@ -415,9 +596,9 @@
     const hint = $("nfc-hint");
     try {
       const url = baseUrl() + await packData(fit.d);
-      const bytes = enc.encode(url).length;
-      if (bytes > NFC_LIMIT) {
-        hint.textContent = "Tautan " + bytes + " byte, melebihi batas chip kecil. Batalkan penulisan.";
+      const bytes = new TextEncoder().encode(url).length;
+      if (bytes > nfcLimit()) {
+        hint.textContent = "Tautan " + bytes + " byte melebihi batas chip NTAG" + settings.chip + ". Batalkan penulisan.";
         return;
       }
       const ndef = new NDEFReader();
@@ -430,8 +611,34 @@
     }
   }
 
+  // ---------- Navigasi ----------
   $("btn-back-create").addEventListener("click", () => { pending = null; location.hash = ""; });
   $("btn-to-create").addEventListener("click", () => { pending = null; location.hash = ""; });
+
+  $("btn-settings").addEventListener("click", () => {
+    $("s-brand").value = settings.brand;
+    $("s-threads").value = settings.threads;
+    $("s-disclaimer").checked = !!settings.disclaimer;
+    $("s-chip").value = settings.chip;
+    prevView = views.find(v => !$(v).classList.contains("hidden") && v !== "view-settings") || "view-create";
+    show("view-settings");
+  });
+  $("s-back").addEventListener("click", () => show(prevView));
+  $("s-brand").addEventListener("change", () => { settings.brand = $("s-brand").value.trim() || DEFAULTS.brand; saveSettings(settings); });
+  $("s-threads").addEventListener("change", () => {
+    const v = $("s-threads").value.trim();
+    if (v && !safeThreadsUrl(v)) { alert("Gunakan tautan Threads seperti https://www.threads.net/@username"); return; }
+    settings.threads = v; saveSettings(settings);
+  });
+  $("s-disclaimer").addEventListener("change", () => { settings.disclaimer = $("s-disclaimer").checked; saveSettings(settings); });
+  $("s-chip").addEventListener("change", () => { settings.chip = $("s-chip").value; saveSettings(settings); });
+  $("s-reset").addEventListener("click", () => {
+    if (!confirm("Kembalikan semua pengaturan ke awal?")) return;
+    settings = Object.assign({}, DEFAULTS);
+    saveSettings(settings);
+    alert("Pengaturan dikembalikan.");
+    $("btn-settings").click();
+  });
 
   // ---------- Halaman darurat (penemu) ----------
   function renderEmergency(d) {
@@ -472,15 +679,21 @@
     } else {
       $("e-cadangan-card").classList.add("hidden");
     }
+
+    // Branding dan tautan diskusi (sumbernya pengaturan pemilik aplikasi di perangkat ini)
+    $("e-brand").textContent = settings.brand;
+    const tu = safeThreadsUrl(settings.threads);
+    $("e-threads-wrap").classList.toggle("hidden", !tu);
+    if (tu) $("e-threads").href = tu;
+
     show("view-emergency");
   }
 
-  // ---------- Router berdasarkan hash ----------
+  // ---------- Router ----------
   async function route() {
     const h = (location.hash || "").slice(1);
     if (!h) { pending = null; show("view-create"); return; }
 
-    // Pembuat baru saja menekan tombol: tampilkan hasil
     if (pending && pending.payload === h) {
       const p = pending;
       pending = null;
@@ -488,7 +701,6 @@
       return;
     }
 
-    // Penemu membuka tautan
     if (h.startsWith("c=") || h.startsWith("u=")) {
       let d;
       try { d = await unpackData(h); } catch (e) { d = null; }
@@ -499,7 +711,7 @@
     }
   }
 
-  // ---------- Pasang sebagai aplikasi (PWA) ----------
+  // ---------- Pasang sebagai aplikasi ----------
   let deferredInstall = null;
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
@@ -513,9 +725,8 @@
     deferredInstall = null;
     $("btn-install").classList.add("hidden");
   });
-  window.addEventListener("appinstalled", () => {
-    $("btn-install").classList.add("hidden");
-  });
+  window.addEventListener("appinstalled", () => $("btn-install").classList.add("hidden"));
+
   const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   if (isIos && !isStandalone) $("ios-hint-wrap").classList.remove("hidden");
