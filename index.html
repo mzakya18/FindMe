@@ -15,7 +15,7 @@
 <style>
   :root { --red:#e11d48; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f8fafc; }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
   .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
   header { display:flex; align-items:center; gap:10px; padding:14px 16px; background:#fff; border-bottom:1px solid var(--line); }
   header h1 { font-size:20px; margin:0; color:var(--red); }
@@ -34,7 +34,6 @@
   .btn-blue { background:#2563eb; color:#fff; }
   .btn-gray { background:#e2e8f0; }
   .btn-dark { background:#0f172a; color:#fff; }
-  .btn-small { display:inline-block; width:auto; padding:8px 12px; margin:0; font-size:13px; }
   .check { display:flex; gap:10px; align-items:flex-start; font-size:14px; margin-top:14px; }
   .check input { width:auto; margin-top:4px; }
   .warn { background:#fef3c7; border:1px solid #fcd34d; color:#78350f; border-radius:12px; padding:12px; font-size:13px; margin-top:12px; }
@@ -52,7 +51,15 @@
   .footer a { color:var(--red); }
   .toggle-row { display:flex; gap:10px; align-items:flex-start; font-size:14px; margin-top:12px; }
   .toggle-row input { width:auto; margin-top:4px; }
-  .legal-text { font-size:13px; color:#334155; background:var(--bg); border-radius:10px; padding:12px; margin-top:8px; }
+  .legal-text { font-size:14px; color:#334155; background:var(--bg); border-radius:10px; padding:12px; margin-top:8px; }
+  .legal-text p { margin:0 0 10px; }
+  .legal-text ul { margin:6px 0 10px; padding-left:20px; }
+  .legal-text li { margin-bottom:4px; }
+  .sos-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .sos-grid a { display:block; text-align:center; padding:12px 8px; border-radius:12px; background:#fff1f2; color:#9f1239; font-weight:700; text-decoration:none; border:1px solid #fecdd3; }
+  .sos-grid a small { display:block; font-weight:400; font-size:11px; color:#881337; }
+  a.inline { color:var(--red); font-weight:600; }
+  .muted-note { font-size:12px; color:var(--muted); margin-top:6px; }
 </style>
 </head>
 <body>
@@ -64,21 +71,21 @@
   <button id="btn-install" class="hidden" style="padding:8px 12px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:13px;cursor:pointer">Pasang Aplikasi</button>
 </header>
 
-<!-- Petunjuk pasang khusus iPhone -->
 <div class="wrap hidden" id="ios-hint-wrap">
   <div class="card" style="font-size:14px;margin-top:12px">
     <b>Pasang di iPhone:</b> ketuk ikon <b>Bagikan</b> (kotak dengan panah) di Safari, lalu pilih <b>Tambah ke Layar Utama</b>.
   </div>
 </div>
 
-<!-- ============ HALAMAN 1: BUAT IDENTITAS ============ -->
+<!-- ============ 1. BUAT IDENTITAS ============ -->
 <div class="wrap" id="view-create">
   <div class="card">
     <h2>Buat Identitas Darurat Anak</h2>
     <p class="lead">
-      FindMe <b>tidak menyimpan data apa pun di server</b>. Data hanya ada di dalam QR, tautan, dan chip NFC yang Anda buat.
-      Tidak ada akun, tidak ada pelacakan, dan tidak ada yang bisa mengubah data setelah QR atau chip dibuat.
+      FindMe <b>tidak menyimpan data pribadi di server mana pun</b>. Data hanya ada di dalam QR, tautan, dan chip NFC yang Anda buat.
+      Siapa pun yang memegang QR, tautan, atau chip tersebut dapat membaca isinya, jadi jagalah kerahasiaannya.
     </p>
+    <a class="inline" href="#" id="link-privacy-top" style="font-size:14px;display:inline-block;margin-top:8px">Baca Kebijakan Privasi &amp; Ketentuan Penggunaan</a>
   </div>
 
   <div class="card">
@@ -111,7 +118,7 @@
       <div class="check">
         <input type="checkbox" id="f-consent" required>
         <label for="f-consent" style="font-weight:400;margin:0">
-          Saya adalah orang tua atau wali sah anak ini. Saya memahami bahwa informasi di atas akan tampil kepada siapa pun yang memindai QR, membaca chip NFC, atau membuka tautan ini. Saya menyetujui bahwa <b>seluruh tindakan di aplikasi ini berada di bawah kendali saya sebagai orang tua atau wali</b>, termasuk pembuatan, pencetakan, penempelan, dan penghentian penggunaan QR atau chip.
+          Saya adalah orang tua atau wali sah anak ini. Saya telah membaca <b>Kebijakan Privasi &amp; Ketentuan Penggunaan</b>, memahami bahwa informasi di atas dapat dibaca oleh siapa pun yang memegang QR, chip, atau tautan ini, dan menyetujui bahwa <b>seluruh tindakan di aplikasi ini berada di bawah kendali saya sebagai orang tua atau wali</b>.
         </label>
       </div>
 
@@ -121,7 +128,7 @@
   </div>
 </div>
 
-<!-- ============ HALAMAN 2: HASIL ============ -->
+<!-- ============ 2. HASIL ============ -->
 <div class="wrap hidden" id="view-result">
   <div class="card">
     <h2>QR Identitas Darurat Siap</h2>
@@ -135,40 +142,25 @@
     <div class="hint" id="nfc-hint" style="margin-top:8px"></div>
     <div class="warn">
       <b>Penting:</b><br>
-      • Data ada di dalam QR, tautan, dan chip ini. Simpan dengan aman.<br>
+      • Data ada di dalam QR, tautan, dan chip ini. Simpan dengan aman dan jangan dibagikan sembarangan.<br>
       • Jika data berubah, buat QR dan chip baru. Yang lama tetap berisi data lama.<br>
-      • Jangan unggah tautan ini ke media sosial.<br>
+      • Jangan unggah QR atau tautan ini ke media sosial.<br>
       • Simpan kartu PNG atau cetak sebelum me-reload halaman.
     </div>
     <button class="btn btn-gray" id="btn-back-create">← Buat Identitas Baru</button>
   </div>
 </div>
 
-<!-- ============ HALAMAN 3: PENGATURAN ============ -->
+<!-- ============ 3. PENGATURAN ============ -->
 <div class="wrap hidden" id="view-settings">
   <div class="card">
     <h2>Pengaturan</h2>
-    <p class="lead">Pengaturan ini hanya tersimpan di perangkat Anda, tidak dikirim ke server mana pun.</p>
-
-    <h3>Kendali orang tua</h3>
-    <div class="legal-text">
-      Seluruh pembuatan, pencetakan, dan penggunaan identitas darurat di FindMe berada di bawah kendali orang tua atau wali anak.
-      Anda dapat berhenti menggunakan kapan saja: cukup jangan lagi mencetak atau menempelkan QR, dan hapus atau tulis ulang chip NFC.
-      Aplikasi ini tidak memiliki akses ke data Anda di luar perangkat.
-    </div>
-
-    <h3>Branding pada kartu</h3>
-    <label for="s-brand">Teks "Find Me by"</label>
-    <input id="s-brand" maxlength="40" placeholder="Muhammad Zaky Akbar">
-
-    <label for="s-threads">Tautan Threads untuk diskusi</label>
-    <input id="s-threads" maxlength="120" placeholder="https://www.threads.net/@username">
-    <div class="hint">Hanya tautan threads.net yang diterima. Kosongkan jika tidak ingin menampilkan.</div>
+    <p class="lead">Pengaturan ini hanya tersimpan di browser perangkat Anda, tidak dikirim ke server mana pun.</p>
 
     <h3>Kartu cetak</h3>
     <div class="toggle-row">
       <input type="checkbox" id="s-disclaimer">
-      <label for="s-disclaimer" style="font-weight:400;margin:0">Tampilkan keterangan legal dan panduan penemu di kartu</label>
+      <label for="s-disclaimer" style="font-weight:400;margin:0">Tampilkan keterangan dan panduan penemu di kartu</label>
     </div>
 
     <h3>Jenis chip NFC</h3>
@@ -179,22 +171,82 @@
       <option value="216">NTAG216 (±860 byte)</option>
     </select>
 
+
+    <h3>Pengembang</h3>
+    <div class="legal-text">
+      Hubungi pengembang jika ingin berdiskusi:<br>
+      <a class="inline" href="https://www.threads.com/@zakymza" target="_blank" rel="noopener noreferrer">Muhammad Zaky Akbar</a>
+    </div>
+
+    <h3>Kebijakan dan bantuan</h3>
+    <button class="btn btn-gray" id="s-privacy">📄 Kebijakan Privasi &amp; Ketentuan</button>
     <button class="btn btn-gray" id="s-reset">Kembalikan ke pengaturan awal</button>
     <button class="btn btn-gray" id="s-back">← Kembali</button>
   </div>
+</div>
 
+<!-- ============ 4. KEBIJAKAN PRIVASI ============ -->
+<div class="wrap hidden" id="view-privacy">
   <div class="card">
-    <h3 style="margin-top:0">Tentang keamanan FindMe</h3>
+    <h2>Kebijakan Privasi &amp; Ketentuan Penggunaan</h2>
+    <p class="muted-note">Terakhir diperbarui: 29 Oktober 2026</p>
+
     <div class="legal-text">
-      • Tidak ada server, database, akun, atau pelacak di FindMe.<br>
-      • Data hanya ada di dalam tautan, QR, atau chip yang Anda buat.<br>
-      • Kode aplikasi bersifat terbuka dan dapat diperiksa oleh siapa pun.<br>
-      • Untuk pertanyaan atau masukan, hubungi lewat tautan Threads di pengaturan.
+      <p><b>1. Tentang FindMe</b><br>
+      FindMe adalah alat bantu sukarela untuk membuat identitas darurat bagi anak dengan kebutuhan khusus. FindMe dibuat untuk membantu orang tua atau wali, dan <b>bukan layanan resmi pemerintah, kepolisian, atau fasilitas kesehatan</b>.</p>
+
+      <p><b>2. Data yang Anda masukkan</b><br>
+      Nama panggilan anak, kota, kondisi yang dicentang, catatan tambahan, nama dan nomor WhatsApp kontak keluarga.</p>
+
+      <p><b>3. Di mana data disimpan</b><br>
+      • <b>Tidak ada server, database, atau akun</b> milik pengembang. Aplikasi tidak mengirim data pribadi ke server mana pun.<br>
+      • Data dimasukkan ke dalam <b>tautan, QR, dan chip NFC</b> yang Anda buat. Data tidak diunggah ke internet oleh aplikasi.<br>
+      • Pengaturan (tautan Threads, jenis chip, dan pilihan kartu) disimpan di browser perangkat Anda saja.<br>
+      • Data dapat juga tersimpan di riwayat browser, tangkapan layar, atau file kartu PNG yang Anda unduh. Hapus file tersebut jika tidak diperlukan.</p>
+
+      <p><b>4. Siapa yang bisa membaca data</b><br>
+      <b>Siapa pun yang memegang QR, chip NFC, atau tautan tersebut dapat membaca isinya.</b> Ini adalah sifat dasar identitas darurat yang dicetak atau ditempel. FindMe tidak dapat mencabut akses setelah QR atau chip beredar. Karena itu, jaga kerahasiaan dan tempelkan hanya pada perlengkapan anak.</p>
+
+      <p><b>5. Hak dan kendali Anda</b><br>
+      • Anda dapat berhenti menggunakan FindMe kapan saja.<br>
+      • Untuk menghentikan akses, hentikan pemakaian QR dan tulis ulang atau hancurkan chip NFC.<br>
+      • Pengembang tidak menerima dan tidak menyimpan data Anda, sehingga tidak ada permintaan akses, perubahan, atau penghapusan yang dapat diproses oleh pengembang.<br>
+      • Seluruh tindakan pembuatan, pencetakan, dan penggunaan berada di bawah kendali orang tua atau wali.</p>
+
+      <p><b>6. Larangan penyalahgunaan</b><br>
+      Pengguna <b>dilarang</b>:<br>
+      • membuat identitas darurat atas nama anak yang bukan anak Anda atau yang tidak berada dalam tanggung jawab Anda;<br>
+      • menyalin, menjual, atau mengumpulkan data orang lain dari QR, tautan, atau chip;<br>
+      • menempelkan QR atau chip di tempat umum yang menampilkan data anak tanpa persetujuan;<br>
+      • menggunakan identitas darurat untuk penipuan, pemerasan, perundungan, atau tujuan lain yang merugikan;<br>
+      • memodifikasi atau memalsukan QR, chip, atau kartu milik orang lain.</p>
+
+      <p><b>7. Ketentuan untuk penemu</b><br>
+      Penemu hanya menggunakan informasi yang tampil untuk membantu anak dan menghubungi keluarga atau layanan darurat. Penemu dilarang menyebarkan, mengumpulkan, atau menggunakan informasi untuk tujuan lain. Fitur kirim lokasi GPS hanya mengirim lokasi ke WhatsApp kontak yang tertera dan tidak disimpan oleh aplikasi.</p>
+
+      <p><b>8. Keadaan darurat</b><br>
+      FindMe <b>tidak menggantikan</b> layanan darurat. Dalam keadaan darurat, segera hubungi 112 atau nomor layanan yang tersedia di halaman darurat.</p>
+
+      <p><b>9. Batasan tanggung jawab</b><br>
+      FindMe disediakan apa adanya dan secara sukarela. Pengembang tidak bertanggung jawab atas penyalahgunaan oleh pengguna atau pihak lain, kehilangan atau pencurian QR, chip, atau perangkat, serta keterlambatan atau kegagalan layanan operator telekomunikasi, WhatsApp, atau browser.</p>
+
+      <p><b>10. Dasar hukum yang menjadi acuan</b><br>
+      • Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)<br>
+      • Undang-Undang Nomor 8 Tahun 2016 tentang Penyandang Disabilitas<br>
+      • Undang-Undang Nomor 35 Tahun 2014 tentang Perubahan atas Undang-Undang Nomor 23 Tahun 2002 tentang Perlindungan Anak<br>
+      • Undang-Undang Nomor 11 Tahun 2008 tentang Informasi dan Transaksi Elektronik, sebagaimana telah diubah dengan Undang-Undang Nomor 19 Tahun 2016 dan Undang-Undang Nomor 1 Tahun 2024</p>
+
+      <p><b>11. Pengembang dan kontak</b><br>
+      Hubungi pengembang jika ingin berdiskusi: <a class="inline" href="https://www.threads.com/@zakymza" target="_blank" rel="noopener noreferrer">Muhammad Zaky Akbar</a> (Threads).</p>
+
+      <p><b>Catatan:</b> Teks ini merupakan informasi umum dan bukan nasihat hukum. Untuk kepastian hukum, konsultasikan dengan advokat atau ahli pelindungan data pribadi.</p>
     </div>
+
+    <button class="btn btn-gray" id="privacy-back">← Kembali</button>
   </div>
 </div>
 
-<!-- ============ HALAMAN 4: DARURAT (untuk penemu) ============ -->
+<!-- ============ 5. DARURAT (untuk penemu) ============ -->
 <div class="wrap hidden" id="view-emergency">
   <div class="card">
     <div class="siren">⚠ IDENTITAS DARURAT ANAK</div>
@@ -212,7 +264,7 @@
     <a class="btn btn-green" id="e-tel-utama" href="#">📞 Telepon Sekarang</a>
     <a class="btn btn-green" id="e-wa-utama" href="#" target="_blank" rel="noopener noreferrer">💬 Kirim WhatsApp</a>
     <button class="btn btn-blue" id="e-gps">📍 Kirim Lokasi Saya via WhatsApp</button>
-    <div class="hint" style="margin-top:6px">Lokasi GPS hanya dikirim ke WhatsApp kontak di atas, tidak disimpan di aplikasi ini.</div>
+    <div class="hint" style="margin-top:6px">Lokasi GPS hanya dikirim ke WhatsApp kontak di atas. Aplikasi tidak menyimpan lokasi.</div>
   </div>
 
   <div class="card hidden" id="e-cadangan-card">
@@ -222,12 +274,25 @@
     <a class="btn btn-green" id="e-wa-cadangan" href="#" target="_blank" rel="noopener noreferrer">💬 WhatsApp Cadangan</a>
   </div>
 
+  <div class="card">
+    <div class="section-label">Layanan darurat (Indonesia)</div>
+    <div class="sos-grid">
+      <a href="tel:112">112<small>Darurat umum</small></a>
+      <a href="tel:110">110<small>Polisi</small></a>
+      <a href="tel:113">113<small>Pemadam kebakaran</small></a>
+      <a href="tel:118">118<small>Ambulans</small></a>
+      <a href="tel:119">119<small>Ambulans (alternatif)</small></a>
+      <a href="tel:115">115<small>SAR / pencarian</small></a>
+    </div>
+  </div>
+
   <div class="footer">
-    <div>Find Me by: <b id="e-brand"></b></div>
-    <div id="e-threads-wrap" class="hidden">Diskusi: <a id="e-threads" href="#" target="_blank" rel="noopener noreferrer">Threads</a></div>
+    <div>FindMe · identitas darurat sukarela</div>
+    <div>Hubungi pengembang jika ingin berdiskusi: <a href="https://www.threads.com/@zakymza" target="_blank" rel="noopener noreferrer">Muhammad Zaky Akbar</a></div>
   </div>
 
   <div class="card">
+    <button class="btn btn-gray" id="btn-emergency-back">← Kembali</button>
     <button class="btn btn-gray" id="btn-to-create">Buat Identitas Sendiri</button>
   </div>
 </div>
@@ -239,7 +304,7 @@
 
   const QR_LIMIT = 900;
   const CHIP_LIMITS = { "213": 130, "215": 480, "216": 860 };
-  const DEFAULTS = { brand: "Muhammad Zaky Akbar", threads: "", disclaimer: true, chip: "213" };
+  const DEFAULTS = { disclaimer: true, chip: "213" };
 
   // Daftar kondisi baku. Setiap kondisi = 1 bit. Urutan TIDAK BOLEH diubah setelah dipakai.
   const FLAGS = [
@@ -258,12 +323,14 @@
   ];
 
   const $ = (id) => document.getElementById(id);
-  const views = ["view-create", "view-result", "view-settings", "view-emergency"];
+  const views = ["view-create", "view-result", "view-settings", "view-privacy", "view-emergency"];
   const enc = new TextEncoder();
   const dec = new TextDecoder();
   let prevView = "view-create";
+  let navDepth = 0; // jumlah perpindahan halaman di dalam aplikasi (untuk tombol Kembali)
+  let firstRoute = true;
 
-  // ---------- Pengaturan (hanya di perangkat) ----------
+  // ---------- Pengaturan (hanya di browser perangkat) ----------
   function loadSettings() {
     try {
       const raw = localStorage.getItem("findme-settings");
@@ -275,9 +342,6 @@
   }
   let settings = loadSettings();
 
-  function safeThreadsUrl(u) {
-    return /^https:\/\/(www\.)?threads\.net\/@[A-Za-z0-9._]+\/?$/.test(u || "") ? u : "";
-  }
   function nfcLimit() { return CHIP_LIMITS[settings.chip] || CHIP_LIMITS["213"]; }
 
   function show(id) {
@@ -401,6 +465,13 @@
     return null;
   }
 
+  // ---------- Navigasi halaman ----------
+  function goto(viewId) {
+    prevView = views.find(v => !$(v).classList.contains("hidden")) || "view-create";
+    show(viewId);
+  }
+  function backTo(viewId) { show(viewId); }
+
   // ---------- Halaman buat ----------
   let pending = null;
 
@@ -423,7 +494,7 @@
 
     if (!isValidPhone(d.w)) return showErr("Nomor WhatsApp kontak utama tidak valid. Contoh: 081234567890");
     if (d.cw && !isValidPhone(d.cw)) return showErr("Nomor WhatsApp cadangan tidak valid.");
-    if (!$("f-consent").checked) return showErr("Mohon centang pernyataan persetujuan dan kendali orang tua.");
+    if (!$("f-consent").checked) return showErr("Mohon centang persetujuan setelah membaca Kebijakan Privasi.");
 
     const payload = await packData(d);
     if (baseUrl().length + payload.length > QR_LIMIT) {
@@ -435,8 +506,6 @@
   });
 
   // ---------- Halaman hasil ----------
-  let lastQrSource = null;
-
   async function renderResult(payload, d) {
     const url = baseUrl() + payload;
     $("qr-box").innerHTML = "";
@@ -447,7 +516,7 @@
       catch (e) { alert("Gagal menyalin. Tekan dan tahan tautan di atas untuk menyalin manual."); }
     };
     $("btn-print").onclick = () => window.print();
-    $("btn-card").onclick = () => downloadCard(d, url);
+    $("btn-card").onclick = () => downloadCard(d);
 
     const cap = $("capacity-info");
     cap.innerHTML = "";
@@ -457,7 +526,7 @@
 
     const fit = await fitForNfc(d);
     if (!fit) {
-      cap.textContent = "Chip " + "NTAG" + settings.chip + " tidak muat untuk data ini. Perpendek nama, kota, atau nomor. QR tetap bisa dipakai.";
+      cap.textContent = "Chip NTAG" + settings.chip + " tidak muat untuk data ini. Perpendek nama, kota, atau nomor. QR tetap bisa dipakai.";
       nfcBtn.classList.add("hidden");
     } else {
       const line1 = document.createElement("div");
@@ -482,7 +551,7 @@
     show("view-result");
   }
 
-  // ---------- Kartu cetak PNG (dengan branding dan keterangan) ----------
+  // ---------- Kartu cetak PNG ----------
   function wrapLines(ctx, text, maxWidth) {
     const words = text.split(/\s+/);
     const lines = [];
@@ -496,17 +565,17 @@
     return lines;
   }
 
-  function downloadCard(d, url) {
+  function downloadCard(d) {
     const W = 1080, H = 1560;
     const canvas = document.createElement("canvas");
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
 
-    // Latar
+    // Latar putih
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, W, H);
 
-    // Watermark diagonal
+    // Watermark diagonal halus
     ctx.save();
     ctx.translate(W / 2, H / 2);
     ctx.rotate(-Math.PI / 6);
@@ -529,7 +598,7 @@
     ctx.font = "34px system-ui, Arial, sans-serif";
     ctx.fillText("Identitas Darurat Anak", 60, 152);
 
-    // Nama anak
+    // Nama dan kota
     ctx.fillStyle = "#64748b";
     ctx.font = "bold 30px system-ui, Arial, sans-serif";
     ctx.fillText("NAMA ANAK", 60, 265);
@@ -549,7 +618,7 @@
     ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
     if (src) ctx.drawImage(src, qrX, qrY, qrSize, qrSize);
 
-    // Kontak
+    // Kontak utama
     ctx.textAlign = "center";
     ctx.fillStyle = "#0f172a";
     ctx.font = "bold 40px system-ui, Arial, sans-serif";
@@ -558,26 +627,20 @@
     ctx.fillText("+" + d.w, W / 2, 1252);
 
     // Keterangan (opsional)
-    let y = 1320;
+    let y = 1305;
     if (settings.disclaimer) {
       ctx.fillStyle = "#64748b";
       ctx.font = "24px system-ui, Arial, sans-serif";
-      const text = "Kartu ini dibuat oleh orang tua atau wali. Seluruh data ada di dalam QR, tidak disimpan di server. " +
-        "Jika menemukan anak ini, pindai QR dan hubungi kontak di atas. Gunakan hanya untuk keperluan darurat.";
+      const text = "Kartu ini dibuat oleh orang tua atau wali. Data ada di dalam QR dan tidak disimpan di server. " +
+        "Jika menemukan anak ini, pindai QR dan hubungi kontak di atas. Jaga kerahasiaan kartu ini.";
       const lines = wrapLines(ctx, text, W - 160);
       lines.forEach(line => { ctx.fillText(line, W / 2, y); y += 34; });
     }
 
-    // Footer
-    ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 38px system-ui, Arial, sans-serif";
-    ctx.fillText("Find Me by: " + settings.brand, W / 2, H - 90);
-    const tu = safeThreadsUrl(settings.threads);
-    if (tu) {
-      ctx.fillStyle = "#e11d48";
-      ctx.font = "30px system-ui, Arial, sans-serif";
-      ctx.fillText("Diskusi: " + tu.replace(/^https:\/\//, ""), W / 2, H - 45);
-    }
+    // Footer darurat
+    ctx.fillStyle = "#9f1239";
+    ctx.font = "bold 34px system-ui, Arial, sans-serif";
+    ctx.fillText("Darurat: 112 · Polisi 110 · Damkar 113 · Ambulans 118", W / 2, H - 70);
 
     canvas.toBlob((blob) => {
       if (!blob) return alert("Gagal membuat kartu. Coba lagi.");
@@ -611,25 +674,17 @@
     }
   }
 
-  // ---------- Navigasi ----------
+  // ---------- Tombol navigasi ----------
   $("btn-back-create").addEventListener("click", () => { pending = null; location.hash = ""; });
   $("btn-to-create").addEventListener("click", () => { pending = null; location.hash = ""; });
 
   $("btn-settings").addEventListener("click", () => {
-    $("s-brand").value = settings.brand;
-    $("s-threads").value = settings.threads;
     $("s-disclaimer").checked = !!settings.disclaimer;
     $("s-chip").value = settings.chip;
-    prevView = views.find(v => !$(v).classList.contains("hidden") && v !== "view-settings") || "view-create";
-    show("view-settings");
+    goto("view-settings");
   });
-  $("s-back").addEventListener("click", () => show(prevView));
-  $("s-brand").addEventListener("change", () => { settings.brand = $("s-brand").value.trim() || DEFAULTS.brand; saveSettings(settings); });
-  $("s-threads").addEventListener("change", () => {
-    const v = $("s-threads").value.trim();
-    if (v && !safeThreadsUrl(v)) { alert("Gunakan tautan Threads seperti https://www.threads.net/@username"); return; }
-    settings.threads = v; saveSettings(settings);
-  });
+  $("s-back").addEventListener("click", () => backTo(prevView === "view-settings" ? "view-create" : prevView));
+
   $("s-disclaimer").addEventListener("change", () => { settings.disclaimer = $("s-disclaimer").checked; saveSettings(settings); });
   $("s-chip").addEventListener("change", () => { settings.chip = $("s-chip").value; saveSettings(settings); });
   $("s-reset").addEventListener("click", () => {
@@ -639,6 +694,15 @@
     alert("Pengaturan dikembalikan.");
     $("btn-settings").click();
   });
+
+  // Kebijakan privasi (dari beranda, pengaturan, atau tautan persetujuan)
+  function openPrivacy(e) {
+    if (e) e.preventDefault();
+    goto("view-privacy");
+  }
+  $("link-privacy-top").addEventListener("click", openPrivacy);
+  $("s-privacy").addEventListener("click", openPrivacy);
+  $("privacy-back").addEventListener("click", () => backTo(prevView === "view-privacy" ? "view-create" : prevView));
 
   // ---------- Halaman darurat (penemu) ----------
   function renderEmergency(d) {
@@ -680,18 +744,21 @@
       $("e-cadangan-card").classList.add("hidden");
     }
 
-    // Branding dan tautan diskusi (sumbernya pengaturan pemilik aplikasi di perangkat ini)
-    $("e-brand").textContent = settings.brand;
-    const tu = safeThreadsUrl(settings.threads);
-    $("e-threads-wrap").classList.toggle("hidden", !tu);
-    if (tu) $("e-threads").href = tu;
-
     show("view-emergency");
   }
+
+  // Tombol Kembali di halaman penemu: kembali ke halaman sebelumnya di aplikasi
+  $("btn-emergency-back").addEventListener("click", () => {
+    if (navDepth > 0) { history.back(); }
+    else { location.hash = ""; }
+  });
 
   // ---------- Router ----------
   async function route() {
     const h = (location.hash || "").slice(1);
+    if (!firstRoute) navDepth++;
+    firstRoute = false;
+
     if (!h) { pending = null; show("view-create"); return; }
 
     if (pending && pending.payload === h) {
